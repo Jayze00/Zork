@@ -1,0 +1,63 @@
+
+/**
+ * 
+ */
+
+/**
+ * @author Jessie
+ *
+ */
+public class Objectj {
+
+	private String whereToUse;
+	private String whereIam;
+	private String descriptionObject;
+
+	/**
+	 * 
+	 */
+	public Objectj(String description) {
+		this.descriptionObject = description;
+	}
+
+	/**
+	 * @return the whereIam
+	 */
+
+	public String getWhereIam() {
+		return whereIam;
+	}
+
+	/**
+	 * @param whereIam
+	 *            the whereIam to set
+	 */
+
+	public void setWhereIam(String whereIam) {
+		this.whereIam = whereIam;
+	}
+
+	/**
+	 * @return the whereToUse
+	 */
+	public String getWhereToUse() {
+		return whereToUse;
+	}
+
+	/**
+	 * @param whereToUse
+	 *            the whereToUse to set
+	 */
+	public void setWhereToUse(String whereToUse) {
+
+		this.whereToUse = whereToUse;
+	}
+
+	/**
+	 * @return the descriptionObject
+	 */
+	public String getDescriptionObject() {
+		return descriptionObject;
+	}
+
+}
