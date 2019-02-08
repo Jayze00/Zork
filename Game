@@ -1,0 +1,388 @@
+import java.util.Stack;
+
+/**
+ * This class is the main class of the "World of Zuul" application. "World of
+ * Zuul" is a very simple, text based adventure game. Users can walk around some
+ * scenery. That's all. It should really be extended to make it more
+ * interesting!
+ * 
+ * To play this game, create an instance of this class and call the "play"
+ * method.
+ * 
+ * This main class creates and initialises all the others: it creates all rooms,
+ * creates the parser and starts the game. It also evaluates and executes the
+ * commands that the parser returns.
+ * 
+ * @author Michael Kolling and David J. Barnes
+ * 
+ */
+
+public class Game {
+	private Parser parser;
+	private Room currentRoom;
+	private Room library;
+	private Room secret;
+	private Room lounge;
+	private Room chamber;
+	private Room theatre;
+	private Objectj screwdriver;
+	private Objectj sword;
+	private Objectj mirror;
+	private Objectj key;
+	private Objectj key2;
+	private Objectj currentObject;
+	private boolean objectFound = false;
+	private boolean missionCompleted = false;
+	private boolean missionActivated = false;
+	private Stack<Objectj> stack = new Stack<Objectj>();
+	private boolean gameLost = false;
+	private boolean wining = true;
+	private boolean firstSword = true;
+	private boolean gameFinished = false;
+	/**
+	 * Create the game and initialise its internal map.
+	 */
+	public Game() {
+		createObjects();
+		createRooms();
+		parser = new Parser();
+	}
+
+	/**
+	 * Create all the rooms and link their exits together.
+	 */
+	private void createRooms() {
+		Room outside, pub, lab, office, forbidden, cooler, classroom;
+
+		// create the rooms
+		// TODO: create a room where it's hot inside
+		outside = new Room("outside the main entrance of the university");
+		theatre = new Room("in a lecture theatre");
+		pub = new Room("in the campus pub");
+		lab = new Room("in a computing lab");
+		office = new Room("in the computing admin office");
+		forbidden = new Room("in a forbidden lab from a crazy scientist");
+		cooler = new Room("in the central cooler of the university");
+		library = new Room("in the main library of the campus");
+		secret = new Room("you found the secret room from the librarian where she keeps all the lost things");
+		classroom = new Room("in a classroom");
+		lounge = new Room("in the lounge for girls");
+		chamber = new Room("you found the chamber of secrets");
+
+		// initialise room exits
+		outside.setExit("east", theatre);
+		outside.setExit("south", lab);
+		outside.setExit("west", pub);
+		outside.setExit("north", library);
+
+		theatre.setExit("west", outside);
+		theatre.setExit("north", classroom);
+		theatre.setExit("south", office);
+
+		pub.setExit("east", outside);
+		pub.setExit("west", cooler);
+
+		lab.setExit("north", outside);
+		lab.setExit("east", office);
+		lab.setExit("south", forbidden);
+
+		office.setExit("west", lab);
+		office.setExit("north", theatre);
+
+		forbidden.setExit("north", lab);
+
+		cooler.setExit("east", pub);
+
+		library.setExit("south", outside);
+		library.setExit("east", classroom);
+
+		secret.setExit("south", library);
+
+		classroom.setExit("west", library);
+		classroom.setExit("south", theatre);
+		classroom.setExit("east", lounge);
+
+		lounge.setExit("west", classroom);
+
+		currentRoom = outside; // start game outside
+
+		// place my objects
+
+		classroom.setBe(screwdriver);
+		secret.setBe(sword);
+		library.setUse(key);
+		lounge.setUse(mirror);
+		cooler.setUse(screwdriver);
+		theatre.setBe(key);
+		chamber.setUse(sword);
+		lounge.setUse(key2);
+		office.setBe(mirror);
+		forbidden.setBe(key2);
+
+	}
+
+	public void createObjects() {
+		screwdriver = new Objectj("this is a screwdriver. you will need it for fixing the cooler");
+		screwdriver.setWhereIam("classroom");
+		screwdriver.setWhereToUse("cooler");
+
+		sword = new Objectj("this is a sword. now you can open the secret door");
+		sword.setWhereIam("secret");
+		sword.setWhereToUse("chamber");
+
+		mirror = new Objectj("this is a mirror. you will use it to pass the lounge");
+		mirror.setWhereIam("office");
+		mirror.setWhereToUse("lounge");
+
+		key = new Objectj("this is a key. only with this you will find the wepon you need to defend the monster");
+		key.setWhereIam("theater");
+		key.setWhereToUse("secret");
+
+		key2 = new Objectj("this is a key. only with this key you can escape with the girl");
+		key2.setWhereIam("forbidden");
+		key2.setWhereToUse("chamber");
+
+		stack.push(mirror);
+		stack.push(key2);
+		stack.push(sword);
+		stack.push(key);
+		stack.push(screwdriver);
+
+		currentObject = stack.pop();
+
+	}
+
+	/**
+	 * Main play routine. Loops until end of play.
+	 */
+	public void play() {
+		printWelcome();
+		// Enter the main command loop. Here we repeatedly read commands and
+		// execute them until the game is over.
+
+		boolean finished = false;
+		while (!finished) {
+			Command command = parser.getCommand();
+			finished = processCommand(command);
+		
+		if (gameLost == true) {
+			System.out.println("All students exclusive you died. You have to go to prison and lost the game");
+			finished = true;
+		}
+		else if (gameFinished == true && gameLost == false) {
+			System.out.println("You saved all students and defended the monster! You are a real hero!!!");
+			finished = true;
+		}
+		}
+		System.out.println("Thank you for playing.  Good bye.");
+	}
+
+	/**
+	 * Print out the opening message for the player.
+	 */
+	private void printWelcome() {
+		System.out.println();
+		System.out.println("Welcome to the World of Zuul!");
+		System.out.println("World of Zuul is a new, incredibly boring adventure game.");
+		System.out.println("Type 'help' if you need help.");
+		System.out.println();
+		System.out.println(currentRoom.getLongDescription());
+	}
+
+	/**
+	 * Given a command, process (that is: execute) the command.
+	 * 
+	 * @param command
+	 *            The command to be processed.
+	 * @return true If the command ends the game, false otherwise.
+	 */
+	private boolean processCommand(Command command) {
+		boolean wantToQuit = false;
+
+		if (command.isUnknown()) {
+			System.out.println("I don't know what you mean...");
+			return false;
+		}
+
+		String commandWord = command.getCommandWord();
+		if (commandWord.equals("help")) {
+			printHelp();
+		} else if (commandWord.equals("go")) {
+			goRoom(command);
+		} else if (commandWord.equals("quit")) {
+			wantToQuit = quit(command);
+		}
+		// else command not recognised.
+		return wantToQuit;
+	}
+
+	// implementations of user commands:
+
+	/**
+	 * Print out some help information. Here we print some stupid, cryptic message
+	 * and a list of the command words.
+	 */
+	private void printHelp() {
+		System.out.println("You are lost. You are alone. You wander");
+		System.out.println("around at the university.");
+		System.out.println();
+		System.out.println("Your command words are:");
+		parser.showCommands();
+	}
+
+	/**
+	 * Try to go to one direction. If there is an exit, enter the new room,
+	 * otherwise print an error message.
+	 */
+	public void goRoom(Command command) {
+		if (!command.hasSecondWord()) {
+			// if there is no second word, we don't know where to go...
+			System.out.println("Go where?");
+			return;
+		}
+
+		String direction = command.getSecondWord();
+
+		// Try to leave current room.
+		Room nextRoom = currentRoom.getExit(direction);
+
+		if (nextRoom == null) {
+			System.out.println("There is no door!");
+		} else {
+			currentRoom = nextRoom;
+			System.out.println(currentRoom.getLongDescription());
+		}
+
+		// activation of the storyline
+		if (currentRoom.getShortDescription().contains("forbidden") && currentRoom.firstVisit == true) {
+			System.out.println("Oh it's very hot in here... Go and fix the cooler!");
+			currentRoom.firstVisit = false;
+			missionActivated = true;
+		}
+
+		// key2 descides if the user wins the game or not
+		if (currentObject == key2) {
+			Objectj peek = stack.peek();
+			if (currentRoom.getBe().contains(peek)) {
+				wining = false;
+				currentObject = stack.pop();
+				objectFound = true;
+				System.out.println(currentObject.getDescriptionObject());
+
+			}
+		}
+
+		// when the user finds the object
+		if (currentRoom.getBe().contains(currentObject) && missionActivated == true && objectFound == false) {
+			objectFound = true;
+			System.out.println(currentObject.getDescriptionObject());
+			if (currentObject == sword && firstSword == true) {
+				currentObject = stack.pop();
+				
+				
+			}
+			if (currentObject == key2) {
+				chamber.setExit("west", theatre);
+				currentObject = stack.pop();
+				wining = true;
+			}
+		}
+
+		// if the next object isn't found but the place where to use
+		if (missionCompleted == false && currentRoom.getUse().contains(currentObject)) {
+			if (currentObject == screwdriver) {
+				System.out.println("You'll need a screwdriver for fixing it. Stupido!");
+			} else if (currentObject == key) {
+				System.out.println("You'll need a key for opening the armory");
+			} else if (currentObject == sword) {
+				System.out.println("You'll need a sword for defending the monster");
+			} else if (currentObject == mirror) {
+				System.out.println(
+						"You'll need a mirror for passing the lounge because the monster has everyone inside there under controll");
+
+			} else {
+				System.out.println("there is a tecnical problem...");
+			}
+
+		}
+
+		// if the mission gets completed
+		if (objectFound == true && currentRoom.getUse().contains(currentObject)) {
+			missionCompleted = true;
+			objectFound = false;
+			if (currentObject == screwdriver) {
+				System.out.println("thanks for fixing! i heard from a secret chamber here on the campus");
+				System.out.println("inside this chamber there is a monster which imprisions some students...");
+				System.out.println("go and safe them!");
+				System.out.println("but you'll need a weapon for defending the monster");
+			} else if (currentObject == key) {
+				System.out.println("with this key you can open the door for the secret library room");
+				System.out.println("there you'll find a sword from the librarian");
+				library.setExit("north", secret);
+				library.setExit("north", secret);
+
+			} else if (currentObject == sword && firstSword == true) {
+				System.out.println("you got your weapon great! go to the chamber and safe the others");
+				System.out.println("but beware you can only pass there if the monster isn't right in fornt of you");
+			} else if (currentObject == key2) {
+				chamber.setExit("west", theatre);
+			} else if (currentObject == mirror) {
+				System.out.println("okay the monster isn't here... you can enter the chamber");
+				System.out.println("there you'll need the sword from the librarian");
+				currentObject = sword;
+				lounge.setExit("south", chamber);
+			} else if (currentObject == sword && firstSword == false) {
+				System.out.println("Respect... you knockouted the monster... you'll need to be fast for escaping");
+				if (wining == false) {
+					System.out.println("haha you can't rescue anyone because you forgott the key to escape");
+					System.out.println("but you're good so i give you your life");
+					gameLost = true;
+				}
+				gameFinished = true;
+			}
+			if (stack.empty() == false) {
+				currentObject = stack.pop();
+			}
+			
+			missionCompleted = false;
+			missionActivated = true;
+
+		}
+
+	}
+
+	/**
+	 * "Quit" was entered. Check the rest of the command to see whether we really
+	 * quit the game.
+	 * 
+	 * @return true, if this command quits the game, false otherwise.
+	 */
+	private boolean quit(Command command) {
+		if (command.hasSecondWord()) {
+			System.out.println("Quit what?");
+			return false;
+		} else {
+			return true; // signal that we want to quit
+		}
+	}
+
+	public Room getCurrentRoom() {
+		return currentRoom;
+	}
+
+	/**
+	 * @return the currentObject
+	 */
+	public Objectj getCurrentObject() {
+		return currentObject;
+	}
+
+	/**
+	 * @param currentObject
+	 *            the currentObject to set
+	 */
+	public void setCurrentObject(Objectj currentObject) {
+		this.currentObject = currentObject;
+	}
+
+}
