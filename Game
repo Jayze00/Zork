@@ -39,6 +39,7 @@ public class Game {
 	private boolean wining = true;
 	private boolean firstSword = true;
 	private boolean gameFinished = false;
+
 	/**
 	 * Create the game and initialise its internal map.
 	 */
@@ -164,15 +165,14 @@ public class Game {
 		while (!finished) {
 			Command command = parser.getCommand();
 			finished = processCommand(command);
-		
-		if (gameLost == true) {
-			System.out.println("All students exclusive you died. You have to go to prison and lost the game");
-			finished = true;
-		}
-		else if (gameFinished == true && gameLost == false) {
-			System.out.println("You saved all students and defended the monster! You are a real hero!!!");
-			finished = true;
-		}
+
+			if (gameLost == true) {
+				System.out.println("All students exclusive you died. You have to go to prison and lost the game");
+				finished = true;
+			} else if (gameFinished == true && gameLost == false) {
+				System.out.println("You saved all students and defended the monster! You are a real hero!!!");
+				finished = true;
+			}
 		}
 		System.out.println("Thank you for playing.  Good bye.");
 	}
@@ -278,32 +278,13 @@ public class Game {
 			System.out.println(currentObject.getDescriptionObject());
 			if (currentObject == sword && firstSword == true) {
 				currentObject = stack.pop();
-				
-				
+
 			}
 			if (currentObject == key2) {
 				chamber.setExit("west", theatre);
 				currentObject = stack.pop();
 				wining = true;
 			}
-		}
-
-		// if the next object isn't found but the place where to use
-		if (missionCompleted == false && currentRoom.getUse().contains(currentObject)) {
-			if (currentObject == screwdriver) {
-				System.out.println("You'll need a screwdriver for fixing it. Stupido!");
-			} else if (currentObject == key) {
-				System.out.println("You'll need a key for opening the armory");
-			} else if (currentObject == sword) {
-				System.out.println("You'll need a sword for defending the monster");
-			} else if (currentObject == mirror) {
-				System.out.println(
-						"You'll need a mirror for passing the lounge because the monster has everyone inside there under controll");
-
-			} else {
-				System.out.println("there is a tecnical problem...");
-			}
-
 		}
 
 		// if the mission gets completed
@@ -343,9 +324,26 @@ public class Game {
 			if (stack.empty() == false) {
 				currentObject = stack.pop();
 			}
-			
+
 			missionCompleted = false;
 			missionActivated = true;
+
+		}
+		// if the next object isn't found but the place where to use
+		if (missionCompleted == false && currentRoom.getUse().contains(currentObject)) {
+			if (currentObject == screwdriver) {
+				System.out.println("You'll need a screwdriver for fixing it. Stupido!");
+			} else if (currentObject == key) {
+				System.out.println("You'll need a key for opening the armory");
+			} else if (currentObject == sword) {
+				System.out.println("You'll need a sword for defending the monster");
+			} else if (currentObject == mirror) {
+				System.out.println(
+						"You'll need a mirror for passing the lounge because the monster has everyone inside there under controll");
+
+			} else {
+				System.out.println("there is a tecnical problem...");
+			}
 
 		}
 
