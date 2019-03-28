@@ -36,7 +36,7 @@ public class Game {
 	private boolean missionActivated = false;
 	private Stack<Objectj> stack = new Stack<Objectj>();
 	private boolean gameLost = false;
-	private boolean wining = true;
+	private boolean wining = false;
 	private boolean firstSword = true;
 	private boolean gameFinished = false;
 
@@ -280,13 +280,25 @@ public class Game {
 				currentObject = stack.pop();
 
 			}
-			if (currentObject == key2) {
+
+			if (currentObject == key) {
+				library.setExit("north", secret);
+			}
+
+			if (currentObject == mirror) {
+				lounge.setExit("south", chamber);
+			}
+			if (currentObject == key2 && currentRoom.getBe().contains(key2)) {
 				chamber.setExit("west", theatre);
 				currentObject = stack.pop();
 				wining = true;
 			}
 		}
 
+		
+		if (currentObject == mirror && objectFound == true) {
+			lounge.setExit("south", chamber);
+		}
 		// if the mission gets completed
 		if (objectFound == true && currentRoom.getUse().contains(currentObject)) {
 			missionCompleted = true;
@@ -299,8 +311,6 @@ public class Game {
 			} else if (currentObject == key) {
 				System.out.println("with this key you can open the door for the secret library room");
 				System.out.println("there you'll find a sword from the librarian");
-				library.setExit("north", secret);
-				library.setExit("north", secret);
 
 			} else if (currentObject == sword && firstSword == true) {
 				System.out.println("you got your weapon great! go to the chamber and safe the others");
@@ -311,13 +321,16 @@ public class Game {
 				System.out.println("okay the monster isn't here... you can enter the chamber");
 				System.out.println("there you'll need the sword from the librarian");
 				currentObject = sword;
-				lounge.setExit("south", chamber);
+				firstSword = false;
+
+				objectFound = true;
 			} else if (currentObject == sword && firstSword == false) {
 				System.out.println("Respect... you knockouted the monster... you'll need to be fast for escaping");
 				if (wining == false) {
 					System.out.println("haha you can't rescue anyone because you forgott the key to escape");
 					System.out.println("but you're good so i give you your life");
 					gameLost = true;
+
 				}
 				gameFinished = true;
 			}
