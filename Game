@@ -348,7 +348,7 @@ public class Game {
 				System.out.println("You'll need a screwdriver for fixing it. Stupido!");
 			} else if (currentObject == key) {
 				System.out.println("You'll need a key for opening the armory");
-			} else if (currentObject == sword) {
+			} else if (currentObject == sword && firstSword == true) {
 				System.out.println("You'll need a sword for defending the monster");
 			} else if (currentObject == mirror) {
 				System.out.println(
