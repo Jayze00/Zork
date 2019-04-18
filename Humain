@@ -1,0 +1,39 @@
+import java.util.Stack;
+
+/**
+ * 
+ */
+
+/**
+ * @author Jessi
+ *
+ */
+public class Humain implements Creature {
+
+	private Stack<String> story = new Stack<String>();
+	private String phrase;
+
+	/**
+	 * @param story the story to set
+	 */
+	public void setStory(String sentence) {
+		story.push(sentence);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Creature#talk()
+	 */
+	@Override
+	public String talk(boolean firstsword) {
+		phrase = story.pop();
+		return phrase;
+	}
+
+	@Override
+	public void print(String dialog) {
+		System.out.println(dialog);
+	}
+
+}
