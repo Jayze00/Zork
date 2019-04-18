@@ -7,7 +7,7 @@
  * @author Jessie
  *
  */
-public class Objectj {
+public class Item {
 
 	private String whereToUse;
 	private String whereIam;
@@ -16,7 +16,7 @@ public class Objectj {
 	/**
 	 * 
 	 */
-	public Objectj(String description) {
+	public Item(String description) {
 		this.descriptionObject = description;
 	}
 
