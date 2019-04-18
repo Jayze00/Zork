@@ -1,0 +1,79 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * 
+ */
+
+/**
+ * @author Jessi
+ *
+ */
+public class Monster implements Creature {
+
+	private static List<String> listmeanstuff = new ArrayList<String>();
+	private static List<String> liststory = new ArrayList<String>();
+	private int i = -1;
+
+	public Monster() {
+
+	}
+
+	/**
+	 * @param listmeanstuff
+	 *            the listmeanstuff to set
+	 */
+	public void setListmeanstuff(String listmeanstuff) {
+		Monster.listmeanstuff.add(listmeanstuff);
+	}
+
+	/**
+	 * @param liststory
+	 *            the liststory to set
+	 */
+	public void setListstory(String liststory) {
+		Monster.liststory.add(liststory);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Creature#talk()
+	 */
+	@Override
+	public String talk(boolean firstsword) {
+		if (firstsword == true) {
+			Random rand = new Random(); // take a random number
+			int size = listmeanstuff.size(); // get how many possible answers
+			int index = rand.nextInt(size); // choose a random answer by its index
+			return listmeanstuff.get(index);
+		} else {
+			i++;
+			return liststory.get(i);
+
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Creature#print(java.lang.String)
+	 */
+	@Override
+	public void print(String dialog) {
+		System.out.println(dialog);
+
+	}
+
+	public void initialize() {
+		listmeanstuff.add("I will kill you all");
+		listmeanstuff.add("I will come and abduct you into the chamber");
+		listmeanstuff.add("you won't master it i know that");
+		listmeanstuff.add("hahahaha you will never find me");
+		listmeanstuff.add("come and find me");
+		listmeanstuff.add("you unprivileged creature - you are a looser");
+		listmeanstuff.add("I will enslave you all");
+	}
+
+}
