@@ -1,0 +1,12 @@
+/**
+ * 
+ */
+
+/**
+ * @author Jessi
+ *
+ */
+public interface Creature {
+	public String talk(boolean firstsword);
+	public void print(String dialog);
+}
